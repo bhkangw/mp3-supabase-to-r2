@@ -1,11 +1,11 @@
 # Supabase Storage to Cloudflare R2 Migration Tool 🚀
 
-This tool helps you migrate MP3 files from Supabase Storage to Cloudflare R2 while updating your database references. Perfect for those looking to move their audio storage to a more cost-effective solution.
+This tool helps you migrate files (MP3s and images) from Supabase Storage to Cloudflare R2 while updating your database references. Perfect for those looking to move their media storage to a more cost-effective solution.
 
 ## Prerequisites
 
 - Node.js installed on your system
-- Supabase project with stored MP3 files (edit the script to fetch other file types)
+- Supabase project with stored files (MP3s and images)
 - Cloudflare account with R2 enabled
 - Access to both Supabase and Cloudflare R2 credentials
 
@@ -51,16 +51,16 @@ The migration script (`move_files.js`) performs the following steps:
 
 1. **File Discovery**: 
    - Fetches all files from your Supabase storage bucket
-   - Filters for MP3 files only
+   - Supports MP3 files and common image formats (jpg, jpeg, png, gif, webp)
 
 2. **File Migration**:
-   For each MP3 file:
+   For each file:
    - Downloads the file from Supabase Storage
    - Uploads it to Cloudflare R2
    - Updates the database references with new R2 URLs
 
 3. **Database Updates**:
-   - Updates your Supabase database 'tracks' table
+   - Updates your Supabase database tables ('tracks' for audio, 'images' for images)
    - Replaces old Supabase Storage URLs with new R2 URLs
 
 ## Running the Migration
@@ -87,6 +87,7 @@ node move_files.js
   1. Keeping track of file migrations
   2. Updating database references to point to new R2 URLs
   3. Ensuring zero downtime during migration
+  4. Handling both audio and image file references appropriately
 
 ## Troubleshooting
 

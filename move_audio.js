@@ -12,8 +12,8 @@ dotenv.config();
 // 🔹 Load Environment Variables
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_KEY;
-const SUPABASE_BUCKET = process.env.SUPABASE_BUCKET;
-const R2_BUCKET = process.env.R2_BUCKET;
+const SUPABASE_AUDIO_BUCKET = process.env.SUPABASE_AUDIO_BUCKET;
+const R2_AUDIO_BUCKET = process.env.R2_AUDIO_BUCKET;
 const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY;
 const R2_SECRET_KEY = process.env.R2_SECRET_KEY;
 const R2_ENDPOINT = process.env.R2_ENDPOINT;
@@ -35,7 +35,7 @@ async function fileExistsInR2(fileName) {
   try {
     await s3.send(
       new HeadObjectCommand({
-        Bucket: R2_BUCKET,
+        Bucket: R2_AUDIO_BUCKET,
         Key: fileName,
       })
     );
@@ -58,7 +58,7 @@ async function moveFiles() {
   while (true) {
     // 🔹 Get MP3 files from Supabase Storage with pagination
     const { data: files, error } = await supabase.storage
-      .from(SUPABASE_BUCKET)
+      .from(SUPABASE_AUDIO_BUCKET)
       .list("", {
         limit: limit,
         offset: offset,
@@ -109,7 +109,7 @@ async function moveFiles() {
 
       // 🔹 Fetch file from Supabase Storage
       const supabaseUrl = new URL(
-        `storage/v1/object/public/${SUPABASE_BUCKET}/${encodeURIComponent(
+        `storage/v1/object/public/${SUPABASE_AUDIO_BUCKET}/${encodeURIComponent(
           file.name
         )}`,
         SUPABASE_URL
@@ -129,7 +129,7 @@ async function moveFiles() {
 
       // 🔹 Upload to Cloudflare R2
       const uploadParams = {
-        Bucket: R2_BUCKET,
+        Bucket: R2_AUDIO_BUCKET,
         Key: file.name,
         Body: buffer, // Correctly formatted file data
         ContentType: "audio/mpeg",
@@ -140,7 +140,7 @@ async function moveFiles() {
 
       // 🔹 Update Supabase DB with new URL
       const newUrl = new URL(
-        `${R2_BUCKET}/${encodeURIComponent(file.name)}`,
+        `${R2_AUDIO_BUCKET}/${encodeURIComponent(file.name)}`,
         R2_ENDPOINT
       ).toString();
       await supabase
