@@ -104,6 +104,28 @@ node move_files.js
    - Confirm files exist in Supabase bucket
    - Check file permissions
 
+## Updating the DB
+
+Update the audio_url and image_url columns in your database to point to the new R2 URLs.
+```sql
+UPDATE tracks
+SET audio_url = REPLACE(audio_url, 'https://<project-ref>.supabase.co/storage/v1/object/public/<bucket>/', 'https://<bucket>.<account-id>.r2.cloudflarestorage.com/')
+WHERE audio_url LIKE 'https://<project-ref>.supabase.co/storage/v1/object/public/<bucket>/%';
+```
+
+```sql
+UPDATE images
+SET image_url = REPLACE(image_url, 'https://<project-ref>.supabase.co/storage/v1/object/public/<bucket>/', 'https://<bucket>.<account-id>.r2.cloudflarestorage.com/')
+WHERE image_url LIKE 'https://<project-ref>.supabase.co/storage/v1/object/public/<bucket>/%';
+```
+
+### Common Errors
+
+1. **Database Update Failed**:
+   - Check if database connection is successful
+   - Verify database table names and column names
+   - Check if database schema is compatible
+
 ## Cost Considerations
 
 - Cloudflare R2: Free for first 10GB/month, then $0.015/GB
